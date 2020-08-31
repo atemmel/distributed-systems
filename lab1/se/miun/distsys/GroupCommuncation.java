@@ -8,6 +8,7 @@ import java.net.MulticastSocket;
 import se.miun.distsys.listeners.ChatMessageListener;
 import se.miun.distsys.messages.ChatMessage;
 import se.miun.distsys.messages.JoinMessage;
+import se.miun.distsys.messages.LeaveMessage;
 import se.miun.distsys.messages.Message;
 import se.miun.distsys.messages.MessageSerializer;
 
@@ -25,10 +26,8 @@ public class GroupCommuncation {
 		try {
 			runGroupCommuncation = true;				
 			datagramSocket = new MulticastSocket(datagramSocketPort);
-						
 			ReceiveThread rt = new ReceiveThread();
 			rt.start();
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -69,6 +68,11 @@ public class GroupCommuncation {
 				if(chatMessageListener != null) {
 					chatMessageListener.onIncomingJoinMessage(joinMessage);
 				}
+			} else if(message instanceof LeaveMessage) {
+				var leaveMessage = (LeaveMessage) message;
+				if(chatMessageListener != null) {
+					chatMessageListener.onIncomingLeaveMessage(leaveMessage);
+				}
 			} else {				
 				System.out.println("Unknown message type");
 			}			
@@ -85,10 +89,22 @@ public class GroupCommuncation {
 		}		
 	}
 
-	public void sendJoinMessage(String user) {
+	public void sendJoinMessage(String name) {
 		try {
+			var user = new User(name);
 			var joinMessage = new JoinMessage(user);
 			byte[] data = messageSerializer.serializeMessage(joinMessage);
+			sendData(data);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void sendLeaveMessage(String name) {
+		try {
+			var user = new User(name);
+			var leaveMessage = new LeaveMessage(user);
+			byte[] data = messageSerializer.serializeMessage(leaveMessage);
 			sendData(data);
 		} catch (Exception e) {
 			e.printStackTrace();
