@@ -7,12 +7,13 @@ import java.net.MulticastSocket;
 
 import se.miun.distsys.listeners.ChatMessageListener;
 import se.miun.distsys.messages.ChatMessage;
+import se.miun.distsys.messages.JoinMessage;
 import se.miun.distsys.messages.Message;
 import se.miun.distsys.messages.MessageSerializer;
 
 public class GroupCommuncation {
 	
-	private int datagramSocketPort = 9999; //You need to change this!		
+	private int datagramSocketPort = 6969;
 	DatagramSocket datagramSocket = null;	
 	boolean runGroupCommuncation = true;	
 	MessageSerializer messageSerializer = new MessageSerializer();
@@ -36,9 +37,8 @@ public class GroupCommuncation {
 	public void shutdown() {
 		runGroupCommuncation = false;		
 	}
-	
 
-	class ReceiveThread extends Thread{
+	class ReceiveThread extends Thread {
 		
 		@Override
 		public void run() {
@@ -64,6 +64,11 @@ public class GroupCommuncation {
 				if(chatMessageListener != null){
 					chatMessageListener.onIncomingChatMessage(chatMessage);
 				}
+			} else if(message instanceof JoinMessage) {
+				JoinMessage joinMessage = (JoinMessage) message;
+				if(chatMessageListener != null) {
+					chatMessageListener.onIncomingJoinMessage(joinMessage);
+				}
 			} else {				
 				System.out.println("Unknown message type");
 			}			
@@ -73,13 +78,30 @@ public class GroupCommuncation {
 	public void sendChatMessage(String chat) {
 		try {
 			ChatMessage chatMessage = new ChatMessage(chat);
-			byte[] sendData = messageSerializer.serializeMessage(chatMessage);
-			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, 
-					InetAddress.getByName("255.255.255.255"), datagramSocketPort);
-			datagramSocket.send(sendPacket);
+			byte[] data = messageSerializer.serializeMessage(chatMessage);
+			sendData(data);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		
+	}
+
+	public void sendJoinMessage(String user) {
+		try {
+			var joinMessage = new JoinMessage(user);
+			byte[] data = messageSerializer.serializeMessage(joinMessage);
+			sendData(data);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void sendData(byte[] data) {
+		try {
+			DatagramPacket sendPacket = new DatagramPacket(data, data.length, InetAddress.getByName("255.255.255.255"), datagramSocketPort);
+			datagramSocket.send(sendPacket);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void setChatMessageListener(ChatMessageListener listener) {

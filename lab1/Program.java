@@ -4,6 +4,7 @@ import java.io.InputStreamReader;
 import se.miun.distsys.GroupCommuncation;
 import se.miun.distsys.listeners.ChatMessageListener;
 import se.miun.distsys.messages.ChatMessage;
+import se.miun.distsys.messages.JoinMessage;
 
 //Skeleton code for Distributed systems 9hp, DT050A
 
@@ -23,6 +24,17 @@ public class Program implements ChatMessageListener{
 		System.out.println("Group Communcation Started");
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));		
+
+		System.out.println("Enter username: ");
+		try { 
+			String username = br.readLine();
+			gc.sendJoinMessage(username);
+			Thread.sleep(1000);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+
 		while(runProgram) {			
 			try {
 				
@@ -40,5 +52,10 @@ public class Program implements ChatMessageListener{
 	@Override
 	public void onIncomingChatMessage(ChatMessage chatMessage) {		
 		System.out.println("Incoming chat message: " + chatMessage.chat);	
+	}
+
+	@Override
+	public void onIncomingJoinMessage(JoinMessage joinMessage) {
+		System.out.println("User " + joinMessage.user + " has joined");
 	}
 }
