@@ -7,6 +7,7 @@ import se.miun.distsys.listeners.ChatMessageListener;
 import se.miun.distsys.messages.ChatMessage;
 import se.miun.distsys.messages.JoinMessage;
 import se.miun.distsys.messages.LeaveMessage;
+import se.miun.distsys.messages.StatusMessage;
 import se.miun.distsys.User;
 
 //Skeleton code for Distributed systems 9hp, DT050A
@@ -17,7 +18,8 @@ public class Program implements ChatMessageListener {
 	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));		
 	HashMap<String, User> users = new HashMap<String, User>();
 	GroupCommuncation gc = null;	
-	String name = "";
+	User currentUser;
+	boolean connected = false;
 	
 	public static void main(String[] args) {
 		Program program = new Program();
@@ -30,6 +32,7 @@ public class Program implements ChatMessageListener {
 		readName();
 
 		join();
+		connected = true;
 		registerInterruptSignal();
 		System.out.println("Group Communcation Started");
 
@@ -63,6 +66,11 @@ public class Program implements ChatMessageListener {
 		users.put(joinMessage.user.name, joinMessage.user);
 		System.out.println("User " + joinMessage.user.name + " has joined");
 		listUsers();
+		try {
+			gc.sendStatusMessage(currentUser);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -72,11 +80,18 @@ public class Program implements ChatMessageListener {
 		listUsers();
 	}
 
+	@Override
+	public void onIncomingStatusMessage(StatusMessage statusMessage) {
+		System.out.println("Status message recieved");
+		users.put(statusMessage.user.name, statusMessage.user);
+		listUsers();
+	}
+
 	private void join() {
 		gc = new GroupCommuncation();		
 		gc.setChatMessageListener(this);
 		try {
-			gc.sendJoinMessage(name);
+			gc.sendJoinMessage(currentUser.name);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -87,22 +102,26 @@ public class Program implements ChatMessageListener {
 	}
 
 	private void leave() {
-		try {
-			gc.sendLeaveMessage(name);
-		} catch (Exception e) {
-			e.printStackTrace();
+		if(connected) {
+			try {
+				gc.sendLeaveMessage(currentUser.name);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
+		connected = false;
 	}
 
 	private void readName() {
 		try { 
-			name = input.readLine();
+			String name = input.readLine();
 			if (name == null) {
-				return;
+				System.exit(-1);
 			}
+			currentUser = new User(name);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return;
+			System.exit(-1);
 		}
 	}
 

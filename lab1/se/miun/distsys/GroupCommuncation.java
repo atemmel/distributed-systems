@@ -9,12 +9,13 @@ import se.miun.distsys.listeners.ChatMessageListener;
 import se.miun.distsys.messages.ChatMessage;
 import se.miun.distsys.messages.JoinMessage;
 import se.miun.distsys.messages.LeaveMessage;
+import se.miun.distsys.messages.StatusMessage;
 import se.miun.distsys.messages.Message;
 import se.miun.distsys.messages.MessageSerializer;
 
 public class GroupCommuncation {
 	
-	private int datagramSocketPort = 6969;
+	private int datagramSocketPort = 7331;
 	DatagramSocket datagramSocket = null;	
 	boolean runGroupCommuncation = true;	
 	MessageSerializer messageSerializer = new MessageSerializer();
@@ -26,6 +27,7 @@ public class GroupCommuncation {
 		try {
 			runGroupCommuncation = true;				
 			datagramSocket = new MulticastSocket(datagramSocketPort);
+			datagramSocket.setBroadcast(true);
 			ReceiveThread rt = new ReceiveThread();
 			rt.start();
 		} catch (Exception e) {
@@ -73,6 +75,11 @@ public class GroupCommuncation {
 				if(chatMessageListener != null) {
 					chatMessageListener.onIncomingLeaveMessage(leaveMessage);
 				}
+			} else if(message instanceof StatusMessage) {
+				var statusMessage = (StatusMessage) message;
+				if(chatMessageListener != null) {
+					chatMessageListener.onIncomingStatusMessage(statusMessage);
+				}
 			} else {				
 				System.out.println("Unknown message type");
 			}			
@@ -105,6 +112,16 @@ public class GroupCommuncation {
 			var user = new User(name);
 			var leaveMessage = new LeaveMessage(user);
 			byte[] data = messageSerializer.serializeMessage(leaveMessage);
+			sendData(data);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void sendStatusMessage(User user) {
+		try {
+			var statusMessage = new StatusMessage(user);
+			byte[] data = messageSerializer.serializeMessage(statusMessage);
 			sendData(data);
 		} catch (Exception e) {
 			e.printStackTrace();
