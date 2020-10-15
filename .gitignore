@@ -2,3 +2,9 @@
 *.pdf
 *.class
 */target/*
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.log
+*.run.xml
