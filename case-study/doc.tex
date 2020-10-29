@@ -8,11 +8,11 @@
 \usepackage{amsmath,amssymb,amsthm, amsfonts}
 \usepackage[backend=biber,citestyle=ieee]{biblatex}
 \usepackage[yyyymmdd]{datetime}
-\usepackage{pgfgantt}
 
 \addbibresource{literature.bib}
 
 \title{Distributed Denial of Service (LOIC, HOIC)}
+
 \author{Adam Temmel (adte1700)}
 
 \begin{document}
@@ -24,11 +24,58 @@
 	\subsection{Low Orbit Ion Cannon (LOIC)}
 		Low Orbit Ion Cannon is the name of open source software built to perform DDoS attacks. It is nowadays considered to be largely ineffective, as security experts have stated most attacks that LOIC can offer are easily mitigated by a properly configured firewall. Historically, however, it has been used in enough attacks for improper usage of the tool to be recognized as a felony by the Computer Fraud and Abuse Act. The name Low Orbit Ion Cannon is believed to have been derived from the fictional weapon of the same name from the Command and Conquer video game series. This works as a suitable analogy to how the software, if given enough resources, operates as a point and click weapon, much like its video game counterpart.
 	\subsection{High Orbit Ion Cannon (HOIC)}
-		Created as an answer to the limitations of the LOIC, the High Orbit Ion Cannon (HOIC)
-	\section{DDoS explanation}
-	\subsection{Expected results}
-	\section{Research method}
-	%\subsection{Type of input(s)}
-	\subsection{Related research 1}
-	\subsection{Related research 2}
+		Created as an answer to the limitations of the LOIC, the High Orbit Ion Cannon (HOIC) improves upon its predecessor in almost every regard. Many of those involved in attacks using the Low Orbit Ion Cannon ended up being arrested, so in order to keep the pressure on targets of interests, the High Orbit Ion Cannon had to be more well developed than what came before it. So much so, that the software was capable to launch attacks with as few as 50 active users.
+	\section{How does DDoS work?}
+		As a preface to how DDoS works in practice, it is a good idea to look at how DoS (Denial of Service) works, as some sort of stepping stone to familiarize oneself with the scenario on a smaller scale. 
+	\subsection{DoS explanation}
+		The idea behind DoS attacks is that one malicious actor disguises itself as a regular user. The malicious actor then performs one or several, seemingly normal request(s) which in some way shape or form puts an unusual amount of pressure on the targeted system. This additional stress generally comes from exhausting the target's resources, such as processing time, or network bandwidth. As an example, a very complicated request can be formed, meaning that the target will have to spend a long time before it can complete the request, thus effectively starving the target on processing power. 
+\\\\
+		The time the target spends on completing requests from the malicious actor is time the target could have spent on regular, law-abiding users. If the time lost on processing malicious requests becomes large enough, the regular requests might not get processed in time, or in some cases not at all.
+	\subsection{DDoS explanation}
+		The idea behind DDoS then closely follows the idea behind DoS, with the only difference being the scale of the attack. Where a DoS attack can be performed by a singular user, a DDoS attack places an emphasis on that the attack is performed by several users. As such, the attack is usually much more detrimental to the wellbeing of the system, as the amount of malicious requests rises significantly. 
+\\\\
+		Furthermore, the act of detecting and stopping a DoS attack is contextually easy, whereas the same can not be said for detecting and stopping a DDoS attack. Once a DoS attack has been detected, the malicious actor can be blocked from the service, which in turn stops the attack. Repeating this process for a DDoS attack is not necessarily as easy, as each individual attacker would have to be identified and blocked, which also could end up taking large amounts of time. Even if the attack eventually would be stopped, the system still risks staying unresponsive for a longer period of time.
+		%\subsection{Type of input(s)}
+	\section{Research}
+		This chapter is intended to provide some insight into what recent advancements have been made in this field.
+	\subsection{DeepDefense: Identifying DDoS Attacks via Deep Learning
+}
+		The product from this research article was a software capable of identifying some DDoS attacks, which was developed through the use of Deep Learning. \cite{7946998}
+	\subsection{DDoS Attacks on the Internet of Things and their Prevention Methods}
+		This research article discussed DDoS as a concept through the lens of IoT devices. It brought up the fact that IoT devices are becoming increasingly prevalent in our households, which means that there are a lot more potential malicious actors in our world. Although not every household owner might have the intent to partake in attacks, the article states that there is a higher risk for these devices to be harvested into larger botnets, who in turn can be used for effective DDoS attacks launched by the owners of said botnets. It was concluded that IoT devices brought a lot of different security vulnerabilities to the table, most of which were unique to the IoT field. The article describes IoT security as "lacking", noting that most of the vulnerabilities accounted for were very general, meaning that little effort had been made to account for flaws specific to an IoT device. \cite{10.1145/3231053.3231057}
+	\printbibliography
 \end{document}
+
+\iffalse
+
+% https://ieeexplore.ieee.org/document/7946998
+
+@INPROCEEDINGS{7946998,
+  author={X. {Yuan} and C. {Li} and X. {Li}},
+  booktitle={2017 IEEE International Conference on Smart Computing (SMARTCOMP)}, 
+  title={DeepDefense: Identifying DDoS Attack via Deep Learning}, 
+  year={2017},
+  volume={},
+  number={},
+  pages={1-8},}
+
+% https://dl.acm.org/doi/10.1145/3231053.3231057
+
+@inproceedings{10.1145/3231053.3231057,
+author = {Mustapha, Hanan and Alghamdi, Ahmed M},
+booktitle = {Proceedings of the 2nd International Conference on Future Networks and Distributed Systems},
+title = {DDoS Attacks on the Internet of Things and Their Prevention Methods},
+year = {2018},
+isbn = {9781450364287},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3231053.3231057},
+doi = {10.1145/3231053.3231057},
+articleno = {4},
+numpages = {5},
+keywords = {software defined networking (SDN), technology, virtualisation, information security, flooding attacks, botnets, internet of things (IoT), distributed denial of service (DDoS), network functions virtualisation (NFV)},
+location = {Amman, Jordan},
+series = {ICFNDS '18}
+}
+
+\fi
