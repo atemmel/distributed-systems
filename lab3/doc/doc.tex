@@ -1,0 +1,67 @@
+\documentclass[a4paper, titlepage,12pt]{article}
+\usepackage[margin=3.7cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[swedish,english]{babel}
+\usepackage{csquotes}
+\usepackage[hyphens]{url}
+\usepackage{amsmath,amssymb,amsthm, amsfonts}
+\usepackage[backend=biber,citestyle=ieee]{biblatex}
+\usepackage[yyyymmdd]{datetime}
+
+\title{Lab 3 Distributed Systems}
+
+\author{Adam Temmel (adte1700)}
+
+\begin{document}
+
+\maketitle
+
+\section{Lab introduction}
+	In this last laboration you are expected to implement a distributed election to process to elect a leader (Bully algorithm). As well as implement total ordering, managed by this leader.
+
+\section{Message types}
+
+This section discusses all messages used throughout the exercise, as well as their respective purposes. By combining them, the program is able to achieve total ordering managed by a single coordinator, as well as perform a reelection in the event that a coordinator disconnects from the system.
+
+\subsection{AuthMessage}
+
+	An AuthMessage is sent from an user to the coordinator that wishes to join the system. It contains the username the user wishes to authenticate itself as. If an AuthMessage does not get a response within a given interval, the user considers itself the coordinator of the system.
+
+\subsection{AssignMessage}
+	An AssignMessage is sent from the coordinator as a response upon receiving an AuthMessage. It contains all previous chat history, as well as an id for the user. If the id received is $-1$, the username was already taken and a new AuthMessage needs to be sent.
+
+\subsection{JoinMessage}
+	A JoinMessage is sent from a user that is about to join the system to all other users. This is a request for the existing users to send a StatusMessage as a response.
+
+\subsection{StatusMessage}
+	A StatusMessage is sent as a response to the user who originally sent a JoinMessage. It contains information about the user so that the receiver can get an understanding of which users are currently connected to the network.
+
+\subsection{LeaveMessage}
+	A LeaveMessage is sent whenever a user leaves the chat. It is mostly a remnant from lab 2, and does not provide any significance for the bully algorithm in this lab.
+
+\subsection{ChatMessage}
+	A ChatMessage contains a message one user wishes to distribute to all other users. It also contains information about the user who sent the message, as well as an unique message id, referred to as a \emph{sequence number}.
+
+\subsection{GenerateSequenceNumberMessage}
+	A GenerateSequenceNumberMessage is a request for the coordinator to create a new sequence number for a regular user. Each ChatMessage sent needs to contain a sequence number, so as to keep a total ordering. Therefore, before a user sends a ChatMessage, it needs to send a GenerateSequenceNumberMessage as a request for a sequence number.
+
+\subsection{SequenceNumberMessage}
+	A SequenceNumberMessage is the response from a GenerateSequenceNumberMessage. It contains the generated sequence number.
+
+\subsection{GetUserIDMessage}
+	A GetUserIDMessage is sent from the recipient of a ChatMessage to the coordinator in order to verify the pairing of user id and sequence number.
+
+\subsection{UserIDMessage}
+	A UserIDMessage is the response sent from the coordinator to the author of a GetUserIDMessage. It contains the user id of the associated sequence number.
+
+\subsection{ElectionMessage}
+	An ElectionMessage is sent from the user that first detects a missing coordinator to the rest of the system, signalling that an election needs to take place.
+
+\subsection{AliveMessage}
+	An AliveMessage is sent between users partaking in an election. If a user receives an AliveMessage containing a user id higher than its own, it considers itself a loser in the election.
+
+\subsection{VictoryMessage}
+	A VictoryMessage is sent from the user partaking in an election that did not receive an AliveMessage containing a user id higher than its own. This user is considered the winner of the election, and signals this by sending a VictoryMessage to every other user.
+
+\end{document}
