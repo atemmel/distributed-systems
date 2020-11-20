@@ -84,7 +84,7 @@
 	$P_4$ will send an election message to all processes with a higher process id than itself ($P_5, P_6$).
 	\subsection*{b)} \emph{If during the election time, no any other process will crash, how many messages will be sent to select a new coodinator?}
 \\\\
-	$P_4$ sends election start message to $P_5$ and $P_6$. $(+2)$
+	$P_4$ sends election start messages to $P_5$, $P_6$ and $P_7$. $(+3)$
 \\\\
 	$P_4$ receives alive messages from $P_5$ and $P_6$. $(+2)$
 \\\\
@@ -94,7 +94,7 @@
 \\\\
 	$P_6$ sends a victory message to all other processes. $(+5)$
 \\\\
-	The sum is $2 + 2 + 3 + 1 + 5 = 13$.
+	The sum is $3 + 2 + 3 + 1 + 5 = 14$.
 
 	\section*{Question 7}
 	\emph{What is monotonic write consistency? Describe a simple implementation of monotonic write consistency.}
@@ -111,6 +111,7 @@
 	\item The processes then send an ACK to the coordinator.
 	\item Upon receiving an ACK from all the other processes, the coordinator multicasts that the checkpoint is completed.
 \end{itemize}
+	These global states must not necessarily be transitless.
 
 	\section*{Question 9}
 	\emph{Briefly describe iterative name resolution and recursive name resolution. Compare the advantages and disadvantages of these two kinds of name resolutions.}
